@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.springboot.car_rental.enums.UserRole;
 
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -25,36 +24,25 @@ public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
-
-    @Column(nullable = false)
+    private Long id;
     private String firstName;
-
-    @Column(nullable = false)
     private String lastName;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role; // "CLIENT" ou "ADMIN"
+    private UserRole userRole; // "CLIENT" ou "ADMIN"
 
     @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(nullable = false)
     private String password;
-
     private String phoneNumber;
     private String address;
 
     //@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     //private List<Reservation> history = new ArrayList<>();
     
-    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(userRole.name()));
     }
-
+    
     @Override
     public String getUsername() {
         return email;
@@ -79,6 +67,5 @@ public class User implements UserDetails{
     public boolean isEnabled() {
         return true;
     }
-
-
+    
 }

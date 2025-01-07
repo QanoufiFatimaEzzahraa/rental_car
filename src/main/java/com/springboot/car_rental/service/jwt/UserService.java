@@ -1,8 +1,9 @@
-package com.springboot.car_rental.service;
+package com.springboot.car_rental.service.jwt;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface CustomUserDetailsService {
+public interface UserService {
+	
     UserDetailsService userDetailsService();
 
 
