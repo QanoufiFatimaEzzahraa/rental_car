@@ -28,7 +28,6 @@ public class SecurityConfig {
 	
     @Autowired
 	UserService userService;
-
     
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -37,7 +36,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAnyAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/customer/**").hasAnyAuthority(UserRole.CUSTOMER.name())
-                        .anyRequest().authenticated()).sessionManagement
+                        .anyRequest().authenticated())
+                .cors()  // Assurez-vous que CORS est activé
+                .and()
+                .sessionManagement
                         (management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
