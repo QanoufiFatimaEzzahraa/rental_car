@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.car_rental.dto.CarDto;
+import com.springboot.car_rental.dto.SearchCarDto;
 import com.springboot.car_rental.entity.Car;
 import com.springboot.car_rental.service.AdminCarService;
 
@@ -68,6 +70,11 @@ public class AdminCarController {
 	        } catch (Exception e) {
 	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 	        }
+	    }
+	 
+	 @PostMapping("/car/search")
+	    public ResponseEntity<?> searchCar(@RequestBody SearchCarDto searchCarDto) {
+	        return ResponseEntity.ok(adminCarService.searchCar(searchCarDto));
 	    }
 
 }

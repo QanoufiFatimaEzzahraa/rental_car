@@ -5,8 +5,12 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.springboot.car_rental.enums.UserRole;
 import com.springboot.car_rental.service.jwt.UserService;
 import com.springboot.car_rental.util.JwtUtil;
 
@@ -26,7 +31,8 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
+    
+	
     private final JwtUtil jwtUtil;
     private final UserService userService;
 

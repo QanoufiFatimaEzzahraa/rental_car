@@ -5,9 +5,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import com.springboot.car_rental.dto.CarDto;
+import com.springboot.car_rental.dto.ListCarDto;
+import com.springboot.car_rental.dto.SearchCarDto;
 import com.springboot.car_rental.entity.Car;
 import com.springboot.car_rental.repository.CarRepository;
 
@@ -77,6 +81,27 @@ public class AdminCarService {
 	
 	public void deleteCar(Long id) {
         carRepository.deleteById(id);
+    }
+	
+	public ListCarDto searchCar(SearchCarDto searchCarDto) {
+        Car car = new Car();
+        car.setBrand(searchCarDto.getBrand());
+        car.setModel(searchCarDto.getModel());
+        car.setPricePerDay(searchCarDto.getPricePerDay());
+
+        ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll()
+        		.withMatcher("brand", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
+        		.withMatcher("model", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
+        		.withMatcher("pricePerDay", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+
+        Example<Car> carExample = Example.of(car, exampleMatcher);
+
+        List<Car> carList = carRepository.findAll(carExample);
+
+        ListCarDto listCarDto = new ListCarDto();
+        listCarDto.setListCarDto(carList.stream().map(Car::getCarDto).collect(Collectors.toList()));
+
+        return listCarDto;
     }
 
 }

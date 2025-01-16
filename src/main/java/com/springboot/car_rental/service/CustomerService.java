@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import com.springboot.car_rental.dto.BookACarDto;
 import com.springboot.car_rental.dto.CarDto;
+import com.springboot.car_rental.dto.ListCarDto;
+import com.springboot.car_rental.dto.UpdateUserProfileDto;
+import com.springboot.car_rental.dto.UserProfileDto;
 import com.springboot.car_rental.entity.BookACar;
 import com.springboot.car_rental.entity.Car;
 import com.springboot.car_rental.entity.User;
@@ -31,6 +34,53 @@ public class CustomerService {
 	@Autowired
     private BookACarRepository bookACarRepository;
 	
+	private UserProfileDto userProfileDto;
+	
+	// Récupérer le profil d'un utilisateur par son ID
+    public User getProfile(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        } else {
+            throw new RuntimeException("Utilisateur introuvable !");
+        }
+    }
+	
+	
+    public UserProfileDto getProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'email : " + email));
+        return user.getUserProfileDto();
+    } 
+	
+    public UserProfileDto updateProfile(String email, UserProfileDto userProfileDto) {
+        // Récupérer l'utilisateur actuel avec son email
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'email : " + email));
+
+        // Vérifier si l'utilisateur souhaite modifier son email
+        if (!user.getEmail().equals(userProfileDto.getEmail())) {
+            // Vérifier si le nouvel email existe déjà dans la base de données
+            boolean emailExists = userRepository.findByEmail(userProfileDto.getEmail()).isPresent();
+            if (emailExists) {
+                throw new RuntimeException("Cet email est déjà utilisé : " + userProfileDto.getEmail());
+            }
+            // Mettre à jour l'email
+            user.setEmail(userProfileDto.getEmail());
+        }
+
+        // Mettre à jour les autres champs modifiables
+        user.setFirstName(userProfileDto.getFirstName());
+        user.setLastName(userProfileDto.getLastName());
+        user.setPhoneNumber(userProfileDto.getPhoneNumber());
+        user.setAddress(userProfileDto.getAddress());
+
+        // Sauvegarde des modifications
+        userRepository.save(user);
+
+        return user.getUserProfileDto();
+    }
+
 	public List<CarDto> getAllCars() {
         return carRepository.findAll().stream().map(Car::getCarDto).collect(Collectors.toList());
     }

@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.springboot.car_rental.dto.UserProfileDto;
 import com.springboot.car_rental.enums.UserRole;
 
 @Entity
@@ -68,4 +69,14 @@ public class User implements UserDetails{
         return true;
     }
     
+    public UserProfileDto getUserProfileDto() {
+        UserProfileDto userProfileDto = new UserProfileDto();
+        userProfileDto.setId(this.id);
+        userProfileDto.setFirstName(this.firstName);
+        userProfileDto.setLastName(this.lastName);
+        userProfileDto.setEmail(this.email);
+        userProfileDto.setPhoneNumber(this.phoneNumber);
+        userProfileDto.setAddress(this.address);
+        return userProfileDto;
+    }
 }

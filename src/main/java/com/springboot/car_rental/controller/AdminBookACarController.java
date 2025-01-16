@@ -39,9 +39,5 @@ public class AdminBookACarController {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
-    
-    @PostMapping("/car/search")
-    public ResponseEntity<?> searchCar(@RequestBody SearchCarDto searchCarDto) {
-        return ResponseEntity.ok(adminBookACarService.searchCar(searchCarDto));
-    }
+   
 }

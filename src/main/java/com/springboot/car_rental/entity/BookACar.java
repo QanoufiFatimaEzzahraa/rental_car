@@ -15,14 +15,16 @@ import java.util.Date;
 @Data
 public class BookACar {
 	
-	 @Id
+	    @Id
 	    @GeneratedValue(strategy = GenerationType.IDENTITY)
 	    private Long id;
+	    
 	    private Date fromDate;
 	    private Date toDate;
 	    private Long days;
 	    private Long pricePerDay;
 	    private Long price;
+	    
 	    private BookCarStatus bookCarStatus;
 	    
 	    @ManyToOne(fetch = FetchType.LAZY, optional = false)

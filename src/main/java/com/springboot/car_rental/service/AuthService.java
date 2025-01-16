@@ -28,14 +28,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthService {
 	
-	@Autowired 
-	UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Autowired
-	UserService userService;
+	private UserService userService;
 	
 	@Autowired
-    JwtUtil jwtUtil;
+    private JwtUtil jwtUtil;
 
 	
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
