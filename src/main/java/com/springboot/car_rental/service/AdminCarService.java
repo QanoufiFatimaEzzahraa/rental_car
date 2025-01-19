@@ -84,15 +84,22 @@ public class AdminCarService {
     }
 	
 	public ListCarDto searchCar(SearchCarDto searchCarDto) {
+		
+		System.out.println("Requête reçue: " + searchCarDto);
+	    
+
+	    
+	 
         Car car = new Car();
         car.setBrand(searchCarDto.getBrand());
         car.setModel(searchCarDto.getModel());
         car.setPricePerDay(searchCarDto.getPricePerDay());
 
+
         ExampleMatcher exampleMatcher = ExampleMatcher.matchingAll()
         		.withMatcher("brand", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
-        		.withMatcher("model", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
-        		.withMatcher("pricePerDay", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+        		.withMatcher("model", ExampleMatcher.GenericPropertyMatchers.exact())
+        		.withMatcher("pricePerDay", ExampleMatcher.GenericPropertyMatchers.exact());
 
         Example<Car> carExample = Example.of(car, exampleMatcher);
 
@@ -100,7 +107,8 @@ public class AdminCarService {
 
         ListCarDto listCarDto = new ListCarDto();
         listCarDto.setListCarDto(carList.stream().map(Car::getCarDto).collect(Collectors.toList()));
-
+        
+        System.out.println(carList.size());
         return listCarDto;
     }
 

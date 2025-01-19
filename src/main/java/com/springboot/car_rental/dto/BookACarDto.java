@@ -12,8 +12,8 @@ public class BookACarDto {
     private Date fromDate;
     private Date toDate;
     private Long days;
-    private Long pricePerDay;
-    private Long price;
+    private double pricePerDay;
+    private double price;
     private BookCarStatus BookCarStatus;
     private Long carId;
     private Long userId;

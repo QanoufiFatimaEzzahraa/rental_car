@@ -2,6 +2,7 @@ package com.springboot.car_rental.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.springboot.car_rental.dto.BookACarDto;
+import com.springboot.car_rental.dto.InvoiceDto;
 import com.springboot.car_rental.enums.BookCarStatus;
 
 import jakarta.persistence.*;
@@ -22,8 +23,8 @@ public class BookACar {
 	    private Date fromDate;
 	    private Date toDate;
 	    private Long days;
-	    private Long pricePerDay;
-	    private Long price;
+	    private double pricePerDay;
+	    private double price;
 	    
 	    private BookCarStatus bookCarStatus;
 	    
@@ -39,6 +40,12 @@ public class BookACar {
 	    @JsonIgnore
 	    private Car car;
 	    
+	 // Méthode pour calculer le prix total
+	    public double calculatePrice() {
+	        this.price = this.days * this.pricePerDay;
+	        return this.price;
+	    }
+	    
 	    public BookACarDto getBookACarDto() {
 	        BookACarDto bookACarDto = new BookACarDto();
 	        bookACarDto.setId(this.id);
@@ -53,6 +60,21 @@ public class BookACar {
 	        bookACarDto.setUserId(this.user.getId());
 	        bookACarDto.setCarId(this.car.getId());
 	        return bookACarDto;
+	    }
+	    
+	 // Méthode pour générer une facture
+	    public InvoiceDto generateInvoice() {
+	        InvoiceDto invoice = new InvoiceDto();
+	        invoice.setBookingId(this.id);
+	        invoice.setFromDate(this.fromDate);
+	        invoice.setToDate(this.toDate);
+	        invoice.setDays(this.days);
+	        invoice.setPricePerDay(this.pricePerDay);
+	        invoice.setTotalPrice(this.price);
+	        invoice.setUserName(this.user.getFirstName() + " " + this.user.getLastName());
+	        invoice.setUserEmail(this.user.getEmail());
+	        invoice.setCarDetails(this.car.getBrand() + " " + this.car.getModel());
+	        return invoice;
 	    }
 
 }

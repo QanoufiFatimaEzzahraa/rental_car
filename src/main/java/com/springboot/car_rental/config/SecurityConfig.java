@@ -38,8 +38,11 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/payments/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAnyAuthority(UserRole.ADMIN.name())
                         .requestMatchers("/api/customer/**").hasAnyAuthority(UserRole.CUSTOMER.name())
+                        .requestMatchers("/api/customer/payments/**").hasAnyAuthority(UserRole.CUSTOMER.name())
+
                         .anyRequest().authenticated())
                 .cors()  // Assurez-vous que CORS est activé
                 .and()

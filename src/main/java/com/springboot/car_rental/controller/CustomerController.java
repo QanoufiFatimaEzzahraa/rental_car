@@ -13,7 +13,9 @@ import com.springboot.car_rental.dto.BookACarDto;
 import com.springboot.car_rental.dto.CarDto;
 import com.springboot.car_rental.dto.UpdateUserProfileDto;
 import com.springboot.car_rental.dto.UserProfileDto;
+import com.springboot.car_rental.entity.BookACar;
 import com.springboot.car_rental.entity.User;
+import com.springboot.car_rental.repository.BookACarRepository;
 import com.springboot.car_rental.repository.UserRepository;
 import com.springboot.car_rental.service.CustomerService;
 import com.springboot.car_rental.util.JwtUtil;
@@ -37,6 +39,11 @@ public class CustomerController {
 	
 	@Autowired
     private JwtUtil jwtUtil;
+	
+	@Autowired
+    private BookACarRepository bookACarRepository;
+	
+	
 
 	@GetMapping("/profile")
     public ResponseEntity<UserProfileDto> getUserProfile() {
@@ -50,7 +57,7 @@ public class CustomerController {
     }
 	
 	@PutMapping("/profile")
-    public ResponseEntity<UserProfileDto> updateUserProfile(@RequestBody UserProfileDto userProfileDto) {
+    public ResponseEntity<UserProfileDto> updateUserProfile(@RequestBody UpdateUserProfileDto userProfileDto) {
         // Récupérer l'utilisateur connecté depuis le SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String userEmail = authentication.getName(); // Récupérer l'email de l'utilisateur
@@ -67,14 +74,19 @@ public class CustomerController {
     }
 	
 	@PostMapping("/car/book")
-    public ResponseEntity<Void> bookACar(@RequestBody BookACarDto bookACarDto) {
-        boolean isSuccessful = customerService.bookACar(bookACarDto);
+	public ResponseEntity<BookACar> bookACar(@RequestBody BookACarDto bookACarDto) {
+	    BookACar savedBooking = customerService.bookACar(bookACarDto);
 
-        if (isSuccessful) {
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    }
+	    // Vérifiez si la réservation a été effectuée avec succès
+	    if (savedBooking != null) {
+	        // Retournez la réservation complète avec les détails, y compris le prix
+	        return ResponseEntity.status(HttpStatus.CREATED).body(savedBooking);
+	    }
+
+	    // Si la réservation échoue, retournez une erreur avec un statut BAD_REQUEST
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+	}
+
 	
 	@GetMapping("/car/{carId}")
     public ResponseEntity<CarDto> getCarById(@PathVariable Long carId) {
@@ -90,5 +102,16 @@ public class CustomerController {
     public ResponseEntity<List<BookACarDto>> getBookingsByUserId(@PathVariable Long userId) {
         return ResponseEntity.ok(customerService.getBookingsByUserId(userId));
     }
+	
+	/**@GetMapping("/car/book/{bookId}")
+	public ResponseEntity<BookACar> getBookingById(@PathVariable Long bookId) {
+	    Optional<BookACar> booking = bookACarRepository.findById(bookId);
+
+	    if (booking.isPresent()) {
+	        return ResponseEntity.ok(booking.get());
+	    }
+	    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+	}**/
+
 
 }

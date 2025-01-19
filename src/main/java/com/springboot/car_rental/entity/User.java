@@ -75,6 +75,7 @@ public class User implements UserDetails{
         userProfileDto.setFirstName(this.firstName);
         userProfileDto.setLastName(this.lastName);
         userProfileDto.setEmail(this.email);
+        userProfileDto.setPassword(this.password);
         userProfileDto.setPhoneNumber(this.phoneNumber);
         userProfileDto.setAddress(this.address);
         return userProfileDto;

@@ -18,6 +18,7 @@ import com.springboot.car_rental.repository.BookACarRepository;
 import com.springboot.car_rental.repository.CarRepository;
 import com.springboot.car_rental.repository.UserRepository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +54,7 @@ public class CustomerService {
         return user.getUserProfileDto();
     } 
 	
-    public UserProfileDto updateProfile(String email, UserProfileDto userProfileDto) {
+    public UserProfileDto updateProfile(String email, UpdateUserProfileDto userProfileDto) {
         // Récupérer l'utilisateur actuel avec son email
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'email : " + email));
@@ -85,30 +86,32 @@ public class CustomerService {
         return carRepository.findAll().stream().map(Car::getCarDto).collect(Collectors.toList());
     }
 	
-	public boolean bookACar(BookACarDto bookACarDto) {
-        Optional<Car> optionalCar = carRepository.findById(bookACarDto.getCarId());
-        Optional<User> optionalUser = userRepository.findById(bookACarDto.getUserId());
+	public BookACar bookACar(BookACarDto bookACarDto) {
+	    Optional<Car> optionalCar = carRepository.findById(bookACarDto.getCarId());
+	    Optional<User> optionalUser = userRepository.findById(bookACarDto.getUserId());
 
-        if (optionalCar.isPresent() && optionalUser.isPresent()) {
-            Car existingCar = optionalCar.get();
+	    if (optionalCar.isPresent() && optionalUser.isPresent()) {
+	        Car existingCar = optionalCar.get();
 
-            BookACar bookACar = new BookACar();
-            bookACar.setUser(optionalUser.get());
-            bookACar.setCar(existingCar);
-            bookACar.setBookCarStatus(BookCarStatus.PENDING);
+	        BookACar bookACar = new BookACar();
+	        bookACar.setUser(optionalUser.get());
+	        bookACar.setCar(existingCar);
+	        bookACar.setFromDate(bookACarDto.getFromDate());
+	        bookACar.setToDate(bookACarDto.getToDate());
+	        bookACar.setDays(bookACarDto.getDays());
+	        bookACar.setPricePerDay(existingCar.getPricePerDay());
+	        double price = bookACar.calculatePrice();
+	        bookACar.setPrice(price); 
+	        bookACar.setBookCarStatus(BookCarStatus.PENDING);
 
-            long diffInMilliSeconds = bookACarDto.getToDate().getTime() - bookACarDto.getFromDate().getTime();
-            long days = TimeUnit.MICROSECONDS.toDays(diffInMilliSeconds);
+	        BookACar savedBookACar = bookACarRepository.save(bookACar);
+	        return savedBookACar;// Enregistrer et récupérer l'objet sauvegardé
+	    
+	    }
 
-            bookACar.setDays(days);
-            bookACar.setPrice((long) (days * existingCar.getPricePerDay()));
+	    return null; // Si la voiture ou l'utilisateur n'existe pas, retourner null
+	}
 
-            bookACarRepository.save(bookACar);
-            return true;
-        }
-
-        return false;
-    }
 	
 	public CarDto getCarById(Long id) {
         Optional<Car> optionalCar = carRepository.findById(id);
